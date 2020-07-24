@@ -1,0 +1,33 @@
+{% load static %}
+<nav class="navbar navbar-light bg-light">
+    <div class="w-100 p-2">
+        <div class="d-flex align-items-center justify-content-between">
+            <a class="navbar-brand" href="{% url 'web:home' %}">
+                <img class="d-inline-block align-center" src="{% static 'img/logo.png' %}" height="36" width="36" alt="logo"/>
+                emeraldpm.io
+            </a>
+            <form action="{% url 'packages:search' %}" class="d-flex flex-grow-1 mb-0 mx-4" method="GET">
+                <div class="input-group">
+                    <input class="form-control flex-grow-1" placeholder="Search for a package..." name="q" type="text" value="{{ request.GET.q }}"/>
+                    <div class="input-group-append">
+                        <button class="btn btn-primary mb-0" type="submit">Search</button>
+                    </div>
+                </div>
+            </form>
+            <span>
+                {% if not user.is_authenticated %}
+                <a class="btn btn-outline-primary mr-1 mb-0" href="{% url 'accounts:login' %}">
+                    Login
+                </a>
+                <a class="btn btn-primary mb-0" href="#">
+                    Sign Up
+                </a>
+                {% else %}
+                <a class="btn btn btn-outline-primary mb-0" href="{% url 'accounts:logout' %}">
+                    Logout
+                </a>
+                {% endif %}
+            </span>
+        </div>
+    </div>
+</nav>

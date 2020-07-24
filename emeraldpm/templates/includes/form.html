@@ -1,0 +1,39 @@
+{% load widget_tweaks %}
+
+<div class="form-groups">
+    {% if form.non_field_errors %}
+        <div class="alert alert-danger" role="alert">
+            {% for error in form.non_field_errors %}
+                <p>{{ error }}</p>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    {% for hidden_field in form.hidden_fields %}
+        {{ hidden_field }}
+    {% endfor %}
+
+    {% for field in form.visible_fields %}
+        {% with field.field.widget.input_type as input_type %}
+            <div class="{% if input_type == 'checkbox' or input_type == 'radio' %}form-check{% else %}form-group{% endif %}">
+                {% if input_type == 'checkbox' or input_type == 'radio' %}
+                    {{ field|add_class:"form-check-input"|add_error_class:"is-invalid" }}
+                    {{ field.label_tag }}
+                {% else %}
+                    {{ field.label_tag }}
+                    {{ field|add_class:"form-control"|add_error_class:"is-invalid" }}
+                {% endif %}
+                {% for error in field.errors %}
+                    <div class="invalid-feedback">
+                        {{ error }}
+                    </div>
+                {% endfor %}
+                {% if field.help_text %}
+                    <small class="form-text text-muted">
+                        {{ field.help_text|safe }}
+                    </small>
+                {% endif %}
+            </div>
+        {% endwith %}
+    {% endfor %}
+</div>

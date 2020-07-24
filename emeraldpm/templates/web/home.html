@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% load humanize %}
+
+{% block content %}
+<div class="text-center bg-primary py-5">
+    <h1 class="text-white display-4 mb-3">Emerald Package Manager</h1>
+    <p class="lead text-white">
+        The official package manager for the Emerald Programming language.
+    </p>
+    <a class="btn btn-light mr-3" href="#">Install</a>
+    <a class="btn btn-light" href="#">Get Started</a>
+</div>
+<div class="container my-3">
+    <h2>Stats</h2>
+    <div class="row mb-3">
+        <div class="col-4 text-center">
+            <h6>
+                Packages
+            </h6>
+            <h4>{{ num_packages }}</h4>
+        </div>
+        <div class="col-4 text-center">
+            <h6>
+                Downloads Last Week
+            </h6>
+            <h4>{{ downloads_last_week }}</h4>
+        </div>
+        <div class="col-4 text-center">
+            <h6>
+                Downloads Last 30 Days
+            </h6>
+            <h4>{{ downloads_last_30_days }}</h4>
+        </div>
+    </div>
+    <h3>Recently Updated Packages</h3>
+    <div>
+        {% for version in recently_published %}
+        <div>
+            {% with package=version.package %}
+            <h5><a href="{% url 'packages:package' package.name %}">{{ package.name }}</a></h5>
+            <p>{{ version.description }}</p>
+            <span>
+                {{ package.owner }} published {{ version.version }} - {{ version.published|naturaltime }}
+            </span>
+            {% endwith %}
+            {% if not forloop.last %}
+            <hr/>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

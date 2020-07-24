@@ -1,0 +1,25 @@
+{% load compress static %}
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html charset=UTF-8" />
+        <title>{% block title %}Emerald Package Manager{% endblock %}</title>
+        <link rel="icon" href="{% static 'img/favicon.ico' %}" type="image/x-icon"/>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/css/all.min.css"/>
+        {% compress css %}
+        <link rel="stylesheet" type="text/x-scss" href="{% static 'scss/main.scss' %}" />
+        {% endcompress %}
+        {% block stylesheet %}{% endblock %}
+    </head>
+    <body>
+        {% block header %}
+        {% include 'includes/header.html' %}
+        {% endblock %}
+        {% block content %}{% endblock %}
+        {% block footer %}{% endblock %}
+        <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+        {% block javascript %}{% endblock %}
+    </body>
+</html>

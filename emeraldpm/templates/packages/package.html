@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+{% load humanize markdown %}
+
+{% block content %}
+{% with latest_version=package.versions.latest %}
+<div class="container mt-3">
+    <h1>
+        {{ package.name }}
+    </h1>
+    <p>{{ latest_version.version }} - published {{ latest_version.published|naturaltime }}</p>
+    <ul class="nav nav-tabs">
+        <li class="nav-item">
+            <a class="nav-link active" data-toggle="tab" href="#readme">Readme</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" data-toggle="tab" href="#versions">{{ package.versions.count }} Versions</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" data-toggle="tab" href="#dependencies">{{ latest_version.dependencies.count }} Dependencies</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" data-toggle="tab" href="#dependents">{{ latest_version.dependents.count }} Dependents</a>
+        </li>
+    </ul>
+    <div class="tab-content p-4">
+        <div class="tab-pane fade show active" id="readme">
+            <div class="row">
+                <div class="col-8 markdown-body">
+                    {{ version.readme|markdown_to_html }}
+                </div>
+                <div class="col-4">
+                    <div class="mb-3">
+                        <h5>Install</h5>
+                        <code class="u-full-width d-block p-2">emeraldpm install {{ package.name }}</code>
+                    </div>
+                    <div>
+                        <h5>Downloads</h5>
+                        <p class="mb-1">
+                            <i class="fas fa-download text-primary mr-1"></i>
+                            Last Week
+                            {{ package.num_downloads_last_week }}
+                        </p>
+                        <p>
+                            <i class="fas fa-download text-primary mr-1"></i>
+                            Last 30 Days
+                            {{ package.num_downloads_last_30_days }}
+                        </p>
+                    </div>
+                    {% if version.repository_url %}
+                    <div>
+                        <h5>Repository</h5>
+                        <p class="truncate">
+                            <a href="{{ version.repository_url }}">{{ version.repository_url }}</a>
+                        </p>
+                    </div>
+                    {% endif %}
+                    <div>
+                        <h5>Last Publish</h5>
+                        <p>{{ latest_version.published|naturaltime }}</p>
+                    </div>
+                    <div>
+                        <h5>Latest Version</h5>
+                        <p>{{ latest_version.version }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="tab-pane fade" id="versions">
+            <div class="list-group">
+                {% for version in package.versions.all %}
+                <a href="{% url 'packages:package' package.name version.version %}" class="list-group-item list-group-item-action">
+                    {{ version.version }} - published {{ version.published|naturaltime }}
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="tab-pane fade" id="dependencies">
+            <div class="list-group">
+                {% for dependency in latest_version.dependencies.all %}
+                <a href="{% url 'packages:package' dependency.package.name %}" class="list-group-item list-group-item-action">
+                    {{ dependency.package.name }}@{{ dependency.version }}
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="tab-pane fade" id="dependents">
+            <div class="list-group">
+                {% for dependent in latest_version.dependents.all %}
+                <a href="{% url 'packages:package' dependent.package.name %}" class="list-group-item list-group-item-action">
+                    {{ dependent.package.name }}@{{ dependent.version }}
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endwith %}
+{% endblock %}

@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% load humanize %}
+
+{% block content %}
+<div class="container my-3">
+    <h1>Search Results{% if request.get.q %} for '{{ request.get.q }}'{% endif %}</h1>
+    {% for package in packages %}
+    <div class="d-flex align-items-center justify-content-between">
+        {% with version=package.versions.latest %}
+        <div>
+            <h5><a href="{% url 'packages:package' package.name %}">{{ package.name }}</a></h5>
+            <p>{{ version.description }}</p>
+            <span>
+                {{ package.owner }} published {{ version.version }} - {{ version.published|naturaltime }}
+            </span>
+        </div>
+        <div>
+            <div class="mb-1">
+                <i class="fas fa-download text-primary mr-1"></i>
+                <span>
+                    Downloads Last Week
+                    {{ package.num_downloads_last_week }}
+                </span>
+            </div>
+            <div class="mb-1">
+                <i class="fas fa-download text-primary mr-1"></i>
+                <span>
+                    Downloads Last 30 Days
+                    {{ package.num_downloads_last_30_days }}
+                </span>
+            </div>
+        </div>
+        {% endwith %}
+    </div>
+    {% if not forloop.last %}
+    <hr/>
+    {% endif %}
+    {% endfor %}
+</div>
+{% endblock %}
