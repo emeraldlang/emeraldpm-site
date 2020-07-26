@@ -21,8 +21,13 @@ from django.urls import include, path
 
 
 urlpatterns = [
-    path('', include('emeraldpm.accounts.urls', namespace='accounts')),
-    path('', include('emeraldpm.packages.urls', namespace='packages')),
+    path('api/accounts/', include('emeraldpm.accounts.urls.api', namespace='accounts_api')),
+    path('', include('emeraldpm.accounts.urls.web', namespace='accounts_web')),
+
+    path('api/packages/', include('emeraldpm.packages.urls.api', namespace='packages_api')),
+    path('', include('emeraldpm.packages.urls.web', namespace='packages_web')),
+
     path('', include('emeraldpm.web.urls', namespace='web')),
+
     path('admin/', admin.site.urls),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

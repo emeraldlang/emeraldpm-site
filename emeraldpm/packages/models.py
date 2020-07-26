@@ -57,8 +57,8 @@ class Version(models.Model):
     archive = models.FileField(
         upload_to=file_directory_path,
         validators=[FileExtensionValidator(allowed_extensions=['zip'])])
-    description = models.TextField(max_length=4096)
-    readme = models.TextField()
+    description = models.TextField(max_length=4096, blank=True)
+    readme = models.TextField(blank=True)
     repository_url = models.URLField(blank=True)
 
     dependencies = models.ManyToManyField(
@@ -77,7 +77,7 @@ class Version(models.Model):
         ordering = ['-version']
 
     def __str__(self):
-        return '%s-%s' % (self.package.name, str(self.version))
+        return '%s@%s' % (self.package.name, str(self.version))
 
 
 class DownloadCount(models.Model):

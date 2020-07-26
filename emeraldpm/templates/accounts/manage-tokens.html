@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-3">
+    <h1>
+        Manage Tokens
+    </h1>
+    <p>
+        If you want to use the Emerald Package Manage command line tool, you will need an
+        authentication token.
+    </p>
+    <p id="tokenDisplay" class="bg-light p-3 border-rounded d-none"></p>
+    <form id="createTokenForm" method="post" novalidate>
+        {% csrf_token %}
+        <button class="btn btn-primary" type="submit">
+            {% if user.auth_token %}
+            Refresh Token
+            {% else %}
+            Create Token
+            {% endif %}
+        </button>
+    </form>
+</div>
+{% endblock %}
+
+{% block javascript %}
+<script>
+    $(document).ready(function() {
+        $('#createTokenForm').submit(function(e) {
+            e.preventDefault()
+            var $form = $(this)
+            var $submit = $form.find(':submit')
+            $.ajax({
+                type: 'POST',
+                url: '{% url "accounts_api:create_token" %}',
+                data: $form.serialize(),
+                success: function(res) {
+                    $("#tokenDisplay")
+                        .text('Please record this token somewhere. You will not be able to retrieve it again.')
+                        .append($("<br>"))
+                        .append($("<code>").text(res.token))
+                        .removeClass("d-none")
+                    $submit.text("Refresh Token")
+                }
+            })
+        })
+    })
+</script>
+{% endblock %}

@@ -1,12 +1,12 @@
 {% load static %}
 <nav class="navbar navbar-light bg-light">
-    <div class="w-100 p-2">
-        <div class="d-flex align-items-center justify-content-between">
+    <div class="container p-2">
+        <div class="w-100 d-flex align-items-center justify-content-between">
             <a class="navbar-brand" href="{% url 'web:home' %}">
                 <img class="d-inline-block align-center" src="{% static 'img/logo.png' %}" height="36" width="36" alt="logo"/>
                 emeraldpm.io
             </a>
-            <form action="{% url 'packages:search' %}" class="d-flex flex-grow-1 mb-0 mx-4" method="GET">
+            <form action="{% url 'packages_web:search' %}" class="d-flex flex-grow-1 mb-0 mx-4" method="GET">
                 <div class="input-group">
                     <input class="form-control flex-grow-1" placeholder="Search for a package..." name="q" type="text" value="{{ request.GET.q }}"/>
                     <div class="input-group-append">
@@ -23,9 +23,23 @@
                     Sign Up
                 </a>
                 {% else %}
-                <a class="btn btn btn-outline-primary mb-0" href="{% url 'accounts:logout' %}">
-                    Logout
-                </a>
+                <div class="dropdown show">
+                    <a class="dropdown-toggle" href="#" data-toggle="dropdown">
+                        {{ user.username }}
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-right">
+                        <a class="dropdown-item" href="#">
+                            View Profile
+                        </a>
+                        <a class="dropdown-item" href="{% url 'accounts_web:manage_tokens' %}">
+                            Manage Tokens
+                        </a>
+                        <hr class="my-1"/>
+                        <a class="dropdown-item" href="{% url 'accounts_web:logout' %}">
+                            Logout
+                        </a>
+                    </div>
+                </div>
                 {% endif %}
             </span>
         </div>

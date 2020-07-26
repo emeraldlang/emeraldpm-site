@@ -8,7 +8,7 @@
     <div class="d-flex align-items-center justify-content-between">
         {% with version=package.versions.latest %}
         <div>
-            <h5><a href="{% url 'packages:package' package.name %}">{{ package.name }}</a></h5>
+            <h5><a href="{% url 'packages_web:package' package.name %}">{{ package.name }}</a></h5>
             <p>{{ version.description }}</p>
             <span>
                 {{ package.owner }} published {{ version.version }} - {{ version.published|naturaltime }}

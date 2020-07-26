@@ -44,6 +44,8 @@ INSTALLED_APPS = [
     'django.contrib.humanize',
 
     'compressor',
+    'rest_framework',
+    'rest_framework.authtoken',
     'widget_tweaks',
 
     'emeraldpm.accounts',
@@ -151,3 +153,14 @@ COMPRESS_PRECOMPILERS = (
 # Media Files
 MEDIA_URL = '/media/'
 MEDIA_ROOT = str(APP_DIR.path('mediafiles'))
+
+# Rest Framework
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.TokenAuthentication',
+    ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',
+    ]
+}
