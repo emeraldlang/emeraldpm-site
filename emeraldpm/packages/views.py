@@ -8,6 +8,7 @@ from django.views.generic import DetailView, ListView
 
 from rest_framework import status
 from rest_framework.generics import CreateAPIView, RetrieveAPIView
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -43,6 +44,7 @@ class PackageDetailView(DetailView):
 
 
 class PublishVersionAPIView(CreateAPIView):
+    permission_classes = (IsAuthenticated,)
     serializer_class = VersionSerializer
 
 
@@ -62,15 +64,18 @@ class VersionDetailAPIView(RetrieveAPIView):
 
 class DownloadVersionAPIView(APIView):
     def get(self, request, name, version):
-        version = Version.objects.get(
-            package__name=name,
-            version=version)
+        try:
+            version = Version.objects.get(
+                package__name=name,
+                version=version)
+        except Version.DoesNotExist:
+            return Response(status=404)
         today = datetime.date.today()
         download_count, _ = DownloadCount.objects.get_or_create(
             package__name=name,
             day=today,
             defaults={
-                'package': Package.objects.get(name=name),
+                'package': version.package,
                 'day': today
             })
 
