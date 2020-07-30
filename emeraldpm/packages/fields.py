@@ -1,5 +1,11 @@
 import struct
+
+from django.core import exceptions
 from django.db import models
+from django.utils.translation import gettext_lazy as _
+
+
+VERSION_REGEX = r'(\d+\.(?:\d+\.)*\d+)|(latest)'
 
 
 class VersionNumber(object):
@@ -26,6 +32,22 @@ class VersionNumber(object):
         )
 
 
+def parse_version(value):
+    if isinstance(value, VersionNumber) or value is None:
+        return value
+    if isinstance(value, int):
+        packed = [b for b in struct.pack('>I', value + 2**31)]
+        return VersionNumber(*packed)
+    try:
+        if isinstance(value, str):
+            return VersionNumber(*value.split('.'))
+    except ValueError:
+        raise exceptions.ValidationError(
+            _('`%(value)s` is not a valid version string.'),
+            code='invalid',
+            params={'value': value})
+
+
 class VersionNumberField(models.Field):
     description = "A project's version number <major.minor.patch.build>"
 
@@ -33,23 +55,18 @@ class VersionNumberField(models.Field):
         return 'IntegerField'
 
     def from_db_value(self, value, expression, connection):
-        return self.to_python(value)
+        if value is None:
+            return value
+        return parse_version(value)
 
     def to_python(self, value):
         if isinstance(value, VersionNumber) or value is None:
             return value
-        if isinstance(value, tuple):
-            return VersionNumber(*value)
-        if isinstance(value, str):
-            return VersionNumber(*value.split('.'))
-        packed = [b for b in struct.pack('>I', value + 2**31)]
-        return VersionNumber(*packed)
+        return parse_version(value)
 
     def get_prep_value(self, value):
         if isinstance(value, VersionNumber):
             return int(value)
-        if isinstance(value, tuple):
-            return int(VersionNumber(*value))
         if isinstance(value, int):
             return value
         if isinstance(value, str):
